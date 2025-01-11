@@ -4,17 +4,11 @@
     <title>Birds of a Feather Scoring Sheet</title>
     <script type="text/javascript">
         const environments = ["desert", "forest", "mountains", "ocean", "marsh"];
-        const birdTypes = ["egg", "1f", "2f", "3f", "1w", "p", "2w"];
-        const scoring = { "egg": 0, "1f": 1, "2f": 1, "3f": 1, "1w": 1, "p": 1, "2w": 2 };
+        const birdsAndScores = { "egg": 0, "1f": 1, "2f": 1, "3f": 1, "1w": 1, "p": 1, "2w": 2 };
+        const birds = Object.keys(birdsAndScores);
 
         const reset = () => {
-            environments.forEach(environment => {
-                birdTypes.forEach(birdType => {
-                    document.getElementById(environment + "_" + birdType).checked = false;
-                })
-                document.getElementById(environment + "_all").checked = false;
-                document.getElementById(environment + "_score").innerHTML = 0;
-            })
+            document.querySelectorAll('input[type=checkbox]').forEach( value => { value.checked = false; })
             checkClick()
         }
 
@@ -23,26 +17,21 @@
             environments.forEach(environment => {
                 var environmentScore = 0;
                 var hasEgg = false;
-                birdTypes.forEach(birdType => {
-                    let identifier = environment + "_" + birdType;
-                    let element = document.getElementById(identifier);
-                    if (element.checked) {
-                        environmentScore += scoring[birdType];
-                        if (birdType == "egg") {
+                birds.forEach(bird => {
+                    if (document.getElementById(environment + "_" + bird).checked) {
+                        environmentScore += birdsAndScores[bird];
+                        if (bird == "egg") {
                             hasEgg = true
                         }
                     }
                 });
-                if ((environmentScore == 7) && hasEgg) {
-                    document.getElementById(environment + "_all").checked = true;
-                    environmentScore += 3;
-                } else {
-                    document.getElementById(environment + "_all").checked = false;
-                }
-                document.getElementById(environment + "_score").innerHTML = environmentScore;
+                const hasAll = (environmentScore == 7) && hasEgg;
+                document.getElementById(environment + "_all").checked = hasAll;
+                environmentScore += hasAll ? 3 : 0;
+                document.getElementById(environment + "_score").innerHTML = environmentScore ? environmentScore : "";
                 totalScore += environmentScore;
             });
-            document.getElementById("total_score").innerHTML = totalScore;
+            document.getElementById("total_score").innerHTML = totalScore ? totalScore : "";
         }
     </script>
     <style>
@@ -53,127 +42,134 @@
         table {
             width: 100%;
             height: 100%;
-            border: 0px;
             table-layout: fixed;
+
+            td {
+                text-align: center;
+            }
+
+            tr.header {
+                background-color: gray;
+                height: 10%;
+            }
+
+            tr.desert {
+                background-color: lightyellow;
+            }
+
+            tr.forest {
+                background-color: lightgreen;
+            }
+
+            tr.mountains {
+                background-color: lightcoral;
+            }
+
+            tr.ocean {
+                background-color: lightsteelblue;
+            }
+
+            tr.marsh {
+                background-color: lightblue;
+            }
+
+            tr.footer {
+                background-color: lightgray;
+                height: 10%;
+            }
         }
 
-        td {
-            text-align: center;
-            padding: 0px;
+        .environment {
+            font-size: xx-large;
         }
 
-        td.score_label {
-            text-align: right;
-        }
-
-        th button {
-            float: left;
-        }
-
-        tr {
-            background-color: lightgray;
-        }
-        tr.desert {
-            background-color: lightyellow;
-        }
-
-        tr.forest {
-            background-color: lightgreen;
-        }
-
-        tr.mountains {
-            background-color: lightcoral;
-        }
-
-        tr.ocean {
-            background-color: teal;
-        }
-
-        tr.marsh {
-            background-color: lightblue;
+        #total_score {
+            font-size: larger;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body onload="reset()">
-    <table>
+    <table id="boaf">
         <tbody>
-            <tr>
-                <th scope="col">BoaF</th>
-                <th scope="col">egg<br />&bull;&bull;&bull;</th>
-                <th scope="col">1f<br />&bull;&bull;</th>
-                <th scope="col">2f<br />&bull;&bull;</th>
-                <th scope="col">3f<br />&bull;&bull;</th>
-                <th scope="col">1w<br />&bull;</th>
-                <th scope="col">p<br />&bull;</th>
-                <th scope="col">2w<br />&bull;</th>
-                <th scope="col">all</th>
-                <th scope="col">&#10047;</th>
+            <tr class="header">
+                <td>Birds of<br />a Feather</td>
+                <td>&#x1f95a;<br />&bull;&bull;&bull;</td>
+                <td>&#x1fab6;<br />&bull;&bull;</td>
+                <td>&#x1fab6;&#x1fab6;<br />&bull;&bull;</td>
+                <td>&#x1fab6;&#x1fab6;&#x1fab6;<br />&bull;&bull;</td>
+                <td>&#x1fabd;<br />&bull;</td>
+                <td>&#x1f985;<br />&bull;</td>
+                <td>&#x1fabd;&#x1fabd;<br />&bull;</td>
+                <td>ALL</td>
+                <td>&#10047;</td>
             </tr>
             <tr class="desert">
-                <th scope="row">desert</th>
-                <td><input type="checkbox" id="desert_egg" onclick="checkClick(this)"><br />&nbsp;</td>
-                <td><input type="checkbox" id="desert_1f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="desert_2f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="desert_3f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="desert_1w" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="desert_p" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="desert_2w" onclick="checkClick(this)"><br />**</td>
-                <td><input type="checkbox" id="desert_all" onclick="return false;"><br />***</td>
+                <td class ="environment">&#x1f3dc;</td>
+                <td><input type="checkbox" id="desert_egg" onclick="checkClick(this)"> <br />&nbsp;</td>
+                <td><input type="checkbox" id="desert_1f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="desert_2f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="desert_3f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="desert_1w" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="desert_p" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="desert_2w" onclick="checkClick(this)"> <br />&#10047;&#10047;</td>
+                <td><input type="checkbox" id="desert_all" onclick="return false;"> <br />&#10047;&#10047;&#10047;</td>
                 <td><span id="desert_score">0</td>
             </tr>
             <tr class="forest">
-                <th scope="row">forest</th>
-                <td><input type="checkbox" id="forest_egg" onclick="checkClick(this)"><br />&nbsp;</td>
-                <td><input type="checkbox" id="forest_1f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="forest_2f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="forest_3f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="forest_1w" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="forest_p" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="forest_2w" onclick="checkClick(this)"><br />**</td>
-                <td><input type="checkbox" id="forest_all" onclick="return false;"><br />***</td>
+                <td class ="environment">&#x1f332;</td>
+                <td><input type="checkbox" id="forest_egg" onclick="checkClick(this)"> <br />&nbsp;</td>
+                <td><input type="checkbox" id="forest_1f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="forest_2f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="forest_3f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="forest_1w" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="forest_p" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="forest_2w" onclick="checkClick(this)"> <br />&#10047;&#10047;</td>
+                <td><input type="checkbox" id="forest_all" onclick="return false;"> <br />&#10047;&#10047;&#10047;</td>
                 <td><span id="forest_score">0</td>
             </tr>
             <tr class="mountains">
-                <th scope="row">mountains</th>
-                <td><input type="checkbox" id="mountains_egg" onclick="checkClick(this)"><br />&nbsp;</td>
-                <td><input type="checkbox" id="mountains_1f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="mountains_2f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="mountains_3f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="mountains_1w" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="mountains_p" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="mountains_2w" onclick="checkClick(this)"><br />**</td>
-                <td><input type="checkbox" id="mountains_all" onclick="return false;"><br />***</td>
+                <td class ="environment">&#x1f3d4;</td>
+                <td><input type="checkbox" id="mountains_egg" onclick="checkClick(this)"> <br />&nbsp;</td>
+                <td><input type="checkbox" id="mountains_1f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="mountains_2f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="mountains_3f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="mountains_1w" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="mountains_p" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="mountains_2w" onclick="checkClick(this)"> <br />&#10047;&#10047;</td>
+                <td><input type="checkbox" id="mountains_all" onclick="return false;"> <br />&#10047;&#10047;&#10047;
+                </td>
                 <td><span id="mountains_score">0</td>
             </tr>
             <tr class="ocean">
-                <th scope="row">ocean</th>
-                <td><input type="checkbox" id="ocean_egg" onclick="checkClick(this)"><br />&nbsp;</td>
-                <td><input type="checkbox" id="ocean_1f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="ocean_2f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="ocean_3f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="ocean_1w" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="ocean_p" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="ocean_2w" onclick="checkClick(this)"><br />**</td>
-                <td><input type="checkbox" id="ocean_all" onclick="return false;"><br />***</td>
+                <td class ="environment">&#x1f30a;</td>
+                <td><input type="checkbox" id="ocean_egg" onclick="checkClick(this)"> <br />&nbsp;</td>
+                <td><input type="checkbox" id="ocean_1f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="ocean_2f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="ocean_3f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="ocean_1w" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="ocean_p" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="ocean_2w" onclick="checkClick(this)"> <br />&#10047;&#10047;</td>
+                <td><input type="checkbox" id="ocean_all" onclick="return false;"> <br />&#10047;&#10047;&#10047;</td>
                 <td><span id="ocean_score">0</td>
             </tr>
             <tr class="marsh">
-                <th scope="row">marsh</th>
-                <td><input type="checkbox" id="marsh_egg" onclick="checkClick(this)"><br />&nbsp;</td>
-                <td><input type="checkbox" id="marsh_1f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="marsh_2f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="marsh_3f" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="marsh_1w" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="marsh_p" onclick="checkClick(this)"><br />*</td>
-                <td><input type="checkbox" id="marsh_2w" onclick="checkClick(this)"><br />**</td>
-                <td><input type="checkbox" id="marsh_all" onclick="return false;"><br />***</td>
+                <td class ="environment">&#x1fab7;</td>
+                <td><input type="checkbox" id="marsh_egg" onclick="checkClick(this)"> <br />&nbsp;</td>
+                <td><input type="checkbox" id="marsh_1f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="marsh_2f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="marsh_3f" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="marsh_1w" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="marsh_p" onclick="checkClick(this)"> <br />&#10047;</td>
+                <td><input type="checkbox" id="marsh_2w" onclick="checkClick(this)"> <br />&#10047;&#10047;</td>
+                <td><input type="checkbox" id="marsh_all" onclick="return false;"> <br />&#10047;&#10047;&#10047;</td>
                 <td><span id="marsh_score">0</td>
             </tr>
-            <tr>
-                <th scope="row" colspan="8"><button onclick="reset()" id="reset_button">reset</button></th>
-                <td class="score_label">Score:</td>
-                <td id="total_score">10</td>
+            <tr class="footer">
+                <td colspan="8"><button onclick="reset()">Reset</button></td>
+                <td>Score:</td>
+                <td id="total_score">0</td>
             </tr>
         </tbody>
     </table>
