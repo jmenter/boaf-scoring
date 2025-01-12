@@ -1,205 +1,228 @@
 <html>
+    <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <title>Birds of a Feather Scoring Sheet</title>
+        <script type="text/javascript">
+            const environmentsAndSymbols = {
+                plains: "&#x1f3dc;",
+                forest: "&#x1f332;",
+                mountains: "&#x1f3d4;",
+                ocean: "&#x1f30a;",
+                marsh: "&#x1fab7;",
+            };
+            const environments = Object.keys(environmentsAndSymbols);
+            const birdsAndScores = {
+                egg: 0,
+                "1f": 1,
+                "2f": 1,
+                "3f": 1,
+                "1w": 1,
+                p: 1,
+                "2w": 2,
+            };
+            const birds = Object.keys(birdsAndScores);
 
-<head>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Birds of a Feather Scoring Sheet</title>
-    <script type="text/javascript">
-        const environmentsAndSymbols = { 'plains': '&#x1f3dc;', 'forest': '&#x1f332;', 'mountains': '&#x1f3d4;', 'ocean': '&#x1f30a;', 'marsh': '&#x1fab7;' };
-        const environments = Object.keys(environmentsAndSymbols);
-        const birdsAndScores = { 'egg': 0, '1f': 1, '2f': 1, '3f': 1, '1w': 1, 'p': 1, '2w': 2 };
-        const birds = Object.keys(birdsAndScores);
-
-        const load = () => {
-            // Prevent screen sleep.
-            document.addEventListener('click', () => {
-                navigator.wakeLock.request('screen', () => {
-                    document.removeEventListener('click');
+            const load = () => {
+                // Prevent screen sleep.
+                document.addEventListener("click", () => {
+                    navigator.wakeLock.request("screen", () => {
+                        document.removeEventListener("click");
+                    });
                 });
-            });
 
-            // Construct important table rows.
-            let table = document.getElementById('boaf');
-            environments.forEach((environment, index) => {
-                let row = table.insertRow(index + 1);
-                row.className = environment;
-                let firstCell = row.insertCell();
-                firstCell.className = 'environment';
-                firstCell.innerHTML = environmentsAndSymbols[environment] + '<br /><span class="description">' + environment + '</span>';
+                // Construct important table rows.
+                const table = document.getElementById("boaf");
+                environments.forEach((environment, index) => {
+                    const row = table.insertRow(index + 1);
+                    row.className = environment;
 
-                birds.forEach(column => {
-                    let columnCell = row.insertCell();
-                    let columnId = environment + '_' + column;
-                    let score = birdsAndScores[column];
-                    let scoreString = score == 0 ? '&nbsp;' : score == 1 ? '&#10047;' : '&#10047;&#10047;';
-                    columnCell.innerHTML = '<input type="checkbox" id="' + columnId + '" onclick="checkClick(this)"> <br />' + scoreString;
+                    const firstCell = row.insertCell();
+                    firstCell.className = "environment";
+                    firstCell.innerHTML = environmentsAndSymbols[environment] + '<br /><span class="description">' + environment + "</span>";
+
+                    birds.forEach((column) => {
+                        let columnCell = row.insertCell();
+                        let columnId = environment + "_" + column;
+                        let score = birdsAndScores[column];
+                        let scoreString = score == 0 ? "&nbsp;" : score == 1 ? "&#10047;" : "&#10047;&#10047;";
+                        columnCell.innerHTML = '<input type="checkbox" id="' + columnId + '" onclick="updateUI()"> <br />' + scoreString;
+                    });
+
+                    const allCell = row.insertCell();
+                    allCell.innerHTML = '<input type="checkbox" id="' + environment + '_all" disabled="disabled";"> <br />&#10047;&#10047;&#10047;';
+
+                    const scoreCell = row.insertCell();
+                    scoreCell.innerHTML = '<span class="environment_score" id="' + environment + '_score">';
                 });
-                let allCell = row.insertCell();
-                allCell.innerHTML = '<input type="checkbox" id="' + environment + '_all" disabled="disabled";"> <br />&#10047;&#10047;&#10047;';
-                let scoreCell = row.insertCell();
-                scoreCell.innerHTML = '<span class="environment_score" id="' + environment + '_score">';
-            })
-            // Read from storage and update UI.
-            readChecks();
-            checkClick();
-        }
+                readStorageToChecks();
+                updateUI();
+            };
 
-        // Clear all checkboxes and update.
-        const reset = () => {
-            document.querySelectorAll('input[type=checkbox]').forEach(value => { value.checked = false; });
-            checkClick();
-        }
-
-        // Update Score UI.
-        const checkClick = () => {
-            var totalScore = 0;
-            environments.forEach(environment => {
-                var environmentScore = 0;
-                var hasEgg = false;
-                birds.forEach(bird => {
-                    if (document.getElementById(environment + "_" + bird).checked) {
-                        environmentScore += birdsAndScores[bird];
-                        if (bird == 'egg') { hasEgg = true; }
-                    }
+            // Clear all checkboxes and update.
+            const reset = () => {
+                document.querySelectorAll("input[type=checkbox]").forEach((value) => {
+                    value.checked = false;
                 });
-                const hasAll = (environmentScore == 7) && hasEgg;
-                document.getElementById(environment + '_all').checked = hasAll;
-                environmentScore += hasAll ? 3 : 0;
-                document.getElementById(environment + '_score').innerHTML = environmentScore ? environmentScore : '';
-                totalScore += environmentScore;
-            });
-            document.getElementById('total_score').innerHTML = totalScore ? totalScore : '';
-            writeChecks();
-        }
+                updateUI();
+            };
 
-        // Check all checkboxes.
-        const checkAll = () => {
-            document.querySelectorAll('input[type=checkbox]').forEach(value => { value.checked = true; });
-            checkClick();
-        }
+            // Update Score UI.
+            const updateUI = () => {
+                var totalScore = 0;
+                environments.forEach((environment) => {
+                    var environmentScore = 0;
+                    var hasEgg = false;
+                    birds.forEach((bird) => {
+                        if (document.getElementById(environment + "_" + bird).checked) {
+                            environmentScore += birdsAndScores[bird];
+                            if (bird == "egg") {
+                                hasEgg = true;
+                            }
+                        }
+                    });
+                    const hasAll = environmentScore == 7 && hasEgg;
+                    document.getElementById(environment + "_all").checked = hasAll;
+                    environmentScore += hasAll ? 3 : 0;
+                    document.getElementById(environment + "_score").innerHTML = environmentScore ? environmentScore : "";
+                    totalScore += environmentScore;
+                });
+                document.getElementById("total_score").innerHTML = totalScore ? totalScore : "";
+                writeStorageFromChecks();
+            };
 
-        // Read checked state from local storage and apply to UI.
-        const readChecks = () => {
-            const storage = JSON.parse(window.localStorage.getItem('boaf'));
-            environments.forEach(environment => birds.forEach(bird => document.getElementById(`${environment}_${bird}`).checked = storage[environment][bird]));
-        }
+            // Check all checkboxes.
+            const checkAll = () => {
+                document.querySelectorAll("input[type=checkbox]").forEach((value) => {
+                    value.checked = true;
+                });
+                updateUI();
+            };
 
-        // Save checked state from UI to local storage.
-        const writeChecks = () => {
-            var storage = {};
-            environments.forEach(environment => {
-                var birdChecks = {};
-                birds.forEach(bird => birdChecks[bird] = document.getElementById(`${environment}_${bird}`).checked);
-                storage[environment] = birdChecks;
-            })
-            window.localStorage.setItem('boaf', JSON.stringify(storage));
-        }
+            // Read checked state from local storage and apply to UI.
+            const readStorageToChecks = () => {
+                const storage = JSON.parse(window.localStorage.getItem("boaf"));
+                environments.forEach((environment) =>
+                    birds.forEach((bird) => (document.getElementById(`${environment}_${bird}`).checked = storage[environment][bird]))
+                );
+            };
 
-    </script>
-    <style>
-        body {
-            margin: 0px;
-            padding: 0px;
-        }
-
-        input[type='checkbox'],
-        button {
-            zoom: 1.75;
-        }
-
-        table {
-            border-collapse: collapse;
-            font-family: Georgia, 'Times New Roman', Times, serif;
-            width: 100%;
-            height: 100%;
-            table-layout: fixed;
-            border: 0px;
-
-            td {
-                border: 1px solid white;
-                text-align: center;
+            // Save checked state from UI to local storage.
+            const writeStorageFromChecks = () => {
+                var storage = {};
+                environments.forEach((environment) => {
+                    var birdChecks = {};
+                    birds.forEach((bird) => (birdChecks[bird] = document.getElementById(`${environment}_${bird}`).checked));
+                    storage[environment] = birdChecks;
+                });
+                window.localStorage.setItem("boaf", JSON.stringify(storage));
+            };
+        </script>
+        <style>
+            body {
+                margin: 0px;
+                padding: 0px;
             }
 
-            tr.header {
-                background-color: lightskyblue;
-                height: 10%;
+            input[type="checkbox"],
+            button {
+                zoom: 1.75;
             }
 
-            tr.plains {
-                color: white;
-                background-color: rgb(129, 74, 40);
+            table {
+                border-collapse: collapse;
+                font-family: Georgia, "Times New Roman", Times, serif;
+                width: 100%;
+                height: 100%;
+                table-layout: fixed;
+                border: 0px;
+
+                td {
+                    border: 1px solid white;
+                    text-align: center;
+                }
+
+                tr.header {
+                    background-color: lightskyblue;
+                    height: 10%;
+                }
+
+                tr.plains {
+                    color: white;
+                    background-color: rgb(129, 74, 40);
+                }
+
+                tr.forest {
+                    color: white;
+                    background-color: rgb(23, 61, 23);
+                }
+
+                tr.mountains {
+                    color: white;
+                    background-color: rgb(77, 55, 116);
+                }
+
+                tr.ocean {
+                    color: white;
+                    background-color: rgb(33, 56, 118);
+                }
+
+                tr.marsh {
+                    color: white;
+                    background-color: rgb(24, 78, 96);
+                }
+
+                tr.footer {
+                    background-color: lightgray;
+                    height: 10%;
+                }
             }
 
-            tr.forest {
-                color: white;
-                background-color: rgb(23, 61, 23);
+            .description {
+                font-size: small;
             }
 
-            tr.mountains {
-                color: white;
-                background-color: rgb(77, 55, 116);
+            .environment {
+                font-size: xx-large;
             }
 
-            tr.ocean {
-                color: white;
-                background-color: rgb(33, 56, 118);
+            .environment_score {
+                font-size: x-large;
+                font-weight: bold;
             }
 
-            tr.marsh {
-                color: white;
-                background-color: rgb(24, 78, 96);
+            #total_score {
+                font-size: xx-large;
+                font-weight: bold;
             }
+        </style>
+    </head>
 
-            tr.footer {
-                background-color: lightgray;
-                height: 10%;
-            }
-        }
-
-        .description {
-            font-size: small;
-        }
-
-        .environment {
-            font-size: xx-large;
-        }
-
-        .environment_score {
-            font-size: x-large;
-            font-weight: bold;
-        }
-
-        #total_score {
-            font-size: xx-large;
-            font-weight: bold;
-        }
-    </style>
-</head>
-
-<body onload="load()">
-    <table id="boaf">
-        <tbody>
-            <tr class="header">
-                <td><em>Birds of<br />a Feather</em></td>
-                <td>&#x1f95a;<br />&bull;&bull;&bull;</td>
-                <td>&#x1fab6;<br />&bull;&bull;</td>
-                <td>&#x1fab6;&#x1fab6;<br />&bull;&bull;</td>
-                <td>&#x1fab6;&#x1fab6;&#x1fab6;<br />&bull;&bull;</td>
-                <td>&#x1fabd;<br />&bull;</td>
-                <td>&#x1f985;<br />&bull;</td>
-                <td>&#x1fabd;&#x1fabd;<br />&bull;</td>
-                <td>ALL</td>
-                <td>&#10047;</td>
-            </tr>
-            <tr class="footer">
-                <td><button onclick="reset()">Reset</button></td>
-                <td colspan="7" class="description">2-4 players: 15 cards, 5 players: 12 cards<br />6 players: 10 cards,
-                    7 players: 8 cards
-                </td>
-                <td onclick="checkAll()">Score:</td>
-                <td id="total_score"></td>
-            </tr>
-        </tbody>
-    </table>
-</body>
-
+    <body onload="load()">
+        <table id="boaf">
+            <tbody>
+                <tr class="header">
+                    <td>
+                        <em>Birds of<br />a Feather</em>
+                    </td>
+                    <td>&#x1f95a;<br />&bull;&bull;&bull;</td>
+                    <td>&#x1fab6;<br />&bull;&bull;</td>
+                    <td>&#x1fab6;&#x1fab6;<br />&bull;&bull;</td>
+                    <td>&#x1fab6;&#x1fab6;&#x1fab6;<br />&bull;&bull;</td>
+                    <td>&#x1fabd;<br />&bull;</td>
+                    <td>&#x1f985;<br />&bull;</td>
+                    <td>&#x1fabd;&#x1fabd;<br />&bull;</td>
+                    <td>ALL</td>
+                    <td>&#10047;</td>
+                </tr>
+                <tr class="footer">
+                    <td>
+                        <button onclick="reset()">Reset</button>
+                    </td>
+                    <td colspan="7" class="description">2-4 players: 15 cards, 5 players: 12 cards<br />6 players: 10 cards, 7 players: 8 cards</td>
+                    <td onclick="checkAll()">Score:</td>
+                    <td id="total_score"></td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
 </html>
