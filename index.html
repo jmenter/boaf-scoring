@@ -3,19 +3,21 @@
 <head>
     <title>Birds of a Feather Scoring Sheet</title>
     <script type="text/javascript">
-        const environmentsAndSymbols = { 'desert': '&#x1f3dc;', 'forest': '&#x1f332;', 'mountains': '&#x1f3d4;', 'ocean': '&#x1f30a;', 'marsh': '&#x1fab7;' };
+        const environmentsAndSymbols = { 'plains': '&#x1f3dc;', 'forest': '&#x1f332;', 'mountains': '&#x1f3d4;', 'ocean': '&#x1f30a;', 'marsh': '&#x1fab7;' };
         const environments = Object.keys(environmentsAndSymbols);
         const birdsAndScores = { 'egg': 0, '1f': 1, '2f': 1, '3f': 1, '1w': 1, 'p': 1, '2w': 2 };
         const birds = Object.keys(birdsAndScores);
 
         const load = () => {
+            navigator.wakeLock?.request('screen');
+            
             let table = document.getElementById('boaf');
             environments.forEach((environment, index) => {
                 let row = table.insertRow(index + 1);
                 row.className = environment;
                 let firstCell = row.insertCell();
                 firstCell.className = 'environment';
-                firstCell.innerHTML = environmentsAndSymbols[environment];
+                firstCell.innerHTML = environmentsAndSymbols[environment] + '<br /><span class="description">' + environment + '</span>';
 
                 birds.forEach(column => {
                     let columnCell = row.insertCell();
@@ -65,7 +67,7 @@
     <style>
         input[type='checkbox'],
         button {
-            zoom: 1.5;
+            zoom: 2;
         }
 
         table {
@@ -73,6 +75,7 @@
             width: 100%;
             height: 100%;
             table-layout: fixed;
+            color: white;
 
             td {
                 text-align: center;
@@ -81,34 +84,39 @@
             tr.header {
                 background-color: lightskyblue;
                 height: 10%;
+                color: black;
             }
 
-            tr.desert {
-                background-color: lightyellow;
+            tr.plains {
+                background-color: rgb(129, 74, 40);
             }
 
             tr.forest {
-                background-color: lightgreen;
+                background-color: rgb(23, 61, 23);
             }
 
             tr.mountains {
-                background-color: lightcoral;
+                background-color: rgb(77, 55, 116);
             }
 
             tr.ocean {
-                background-color: lightsteelblue;
+                background-color: rgb(33, 56, 118);
             }
 
             tr.marsh {
-                background-color: lightblue;
+                background-color: rgb(24, 78, 96);
             }
 
             tr.footer {
                 background-color: lightgray;
                 height: 10%;
+                color: black;
             }
         }
 
+        .description {
+            font-size: small;
+        }
         .environment {
             font-size: xx-large;
         }
@@ -124,7 +132,7 @@
     <table id="boaf">
         <tbody>
             <tr class="header">
-                <td>Birds of<br />a Feather</td>
+                <td><em>Birds of<br />a Feather</em></td>
                 <td>&#x1f95a;<br />&bull;&bull;&bull;</td>
                 <td>&#x1fab6;<br />&bull;&bull;</td>
                 <td>&#x1fab6;&#x1fab6;<br />&bull;&bull;</td>
