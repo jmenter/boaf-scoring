@@ -4,47 +4,47 @@
         <title>Birds of a Feather Scoring Sheet</title>
         <script type="text/javascript">
             const environmentsAndSymbols = {
-                plains: "&#x1f3dc;",
-                forest: "&#x1f332;",
-                mountains: "&#x1f3d4;",
-                ocean: "&#x1f30a;",
-                marsh: "&#x1fab7;",
+                plains: '&#x1f3dc;',
+                forest: '&#x1f332;',
+                mountains: '&#x1f3d4;',
+                ocean: '&#x1f30a;',
+                marsh: '&#x1fab7;',
             };
             const environments = Object.keys(environmentsAndSymbols);
             const birdsAndScores = {
                 egg: 0,
-                "1f": 1,
-                "2f": 1,
-                "3f": 1,
-                "1w": 1,
+                '1f': 1,
+                '2f': 1,
+                '3f': 1,
+                '1w': 1,
                 p: 1,
-                "2w": 2,
+                '2w': 2,
             };
             const birds = Object.keys(birdsAndScores);
 
             const load = () => {
                 // Prevent screen sleep.
-                document.addEventListener("click", () => {
-                    navigator.wakeLock.request("screen", () => {
-                        document.removeEventListener("click");
+                document.addEventListener('click', () => {
+                    navigator.wakeLock.request('screen', () => {
+                        document.removeEventListener('click');
                     });
                 });
 
                 // Construct important table rows.
-                const table = document.getElementById("boaf");
+                const table = document.getElementById('boaf');
                 environments.forEach((environment, index) => {
                     const row = table.insertRow(index + 1);
                     row.className = environment;
 
                     const firstCell = row.insertCell();
-                    firstCell.className = "environment";
-                    firstCell.innerHTML = environmentsAndSymbols[environment] + '<br /><span class="description">' + environment + "</span>";
+                    firstCell.className = 'environment';
+                    firstCell.innerHTML = environmentsAndSymbols[environment] + '<br /><span class="description">' + environment + '</span>';
 
                     birds.forEach((column) => {
                         let columnCell = row.insertCell();
-                        let columnId = environment + "_" + column;
+                        let columnId = environment + '_' + column;
                         let score = birdsAndScores[column];
-                        let scoreString = score == 0 ? "&nbsp;" : score == 1 ? "&#10047;" : "&#10047;&#10047;";
+                        let scoreString = score == 0 ? '&nbsp;' : score == 1 ? '&#10047;' : '&#10047;&#10047;';
                         columnCell.innerHTML = '<input type="checkbox" id="' + columnId + '" onclick="updateUI()"> <br />' + scoreString;
                     });
 
@@ -60,7 +60,7 @@
 
             // Clear all checkboxes and update.
             const reset = () => {
-                document.querySelectorAll("input[type=checkbox]").forEach((value) => {
+                document.querySelectorAll('input[type=checkbox]').forEach((value) => {
                     value.checked = false;
                 });
                 updateUI();
@@ -73,26 +73,26 @@
                     var environmentScore = 0;
                     var hasEgg = false;
                     birds.forEach((bird) => {
-                        if (document.getElementById(environment + "_" + bird).checked) {
+                        if (document.getElementById(environment + '_' + bird).checked) {
                             environmentScore += birdsAndScores[bird];
-                            if (bird == "egg") {
+                            if (bird == 'egg') {
                                 hasEgg = true;
                             }
                         }
                     });
                     const hasAll = environmentScore == 7 && hasEgg;
-                    document.getElementById(environment + "_all").checked = hasAll;
+                    document.getElementById(environment + '_all').checked = hasAll;
                     environmentScore += hasAll ? 3 : 0;
-                    document.getElementById(environment + "_score").innerHTML = environmentScore ? environmentScore : "";
+                    document.getElementById(environment + '_score').innerHTML = environmentScore ? environmentScore : '';
                     totalScore += environmentScore;
                 });
-                document.getElementById("total_score").innerHTML = totalScore ? totalScore : "";
+                document.getElementById('total_score').innerHTML = totalScore ? totalScore : '';
                 writeStorageFromChecks();
             };
 
             // Check all checkboxes.
             const checkAll = () => {
-                document.querySelectorAll("input[type=checkbox]").forEach((value) => {
+                document.querySelectorAll('input[type=checkbox]').forEach((value) => {
                     value.checked = true;
                 });
                 updateUI();
@@ -100,7 +100,7 @@
 
             // Read checked state from local storage and apply to UI.
             const readStorageToChecks = () => {
-                const storage = JSON.parse(window.localStorage.getItem("boaf"));
+                const storage = JSON.parse(window.localStorage.getItem('boaf'));
                 environments.forEach((environment) =>
                     birds.forEach((bird) => (document.getElementById(`${environment}_${bird}`).checked = storage[environment][bird]))
                 );
@@ -114,7 +114,7 @@
                     birds.forEach((bird) => (birdChecks[bird] = document.getElementById(`${environment}_${bird}`).checked));
                     storage[environment] = birdChecks;
                 });
-                window.localStorage.setItem("boaf", JSON.stringify(storage));
+                window.localStorage.setItem('boaf', JSON.stringify(storage));
             };
         </script>
         <style>
@@ -123,14 +123,14 @@
                 padding: 0px;
             }
 
-            input[type="checkbox"],
+            input[type='checkbox'],
             button {
                 zoom: 1.75;
             }
 
             table {
                 border-collapse: collapse;
-                font-family: Georgia, "Times New Roman", Times, serif;
+                font-family: Georgia, 'Times New Roman', Times, serif;
                 width: 100%;
                 height: 100%;
                 table-layout: fixed;
