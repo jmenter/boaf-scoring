@@ -9,13 +9,38 @@
         const birdsAndScores = { 'egg': 0, '1f': 1, '2f': 1, '3f': 1, '1w': 1, 'p': 1, '2w': 2 };
         const birds = Object.keys(birdsAndScores);
 
+        // Read checked state from local storage and apply to UI.
+        const readChecks = () => {
+            const storage = JSON.parse(window.localStorage.getItem('boaf'))
+            environments.forEach(environment => {
+                birds.forEach(bird => {
+                    document.getElementById(`${environment}_${bird}`).checked = storage[environment][bird]
+                })
+            })
+        }
+
+        // Save checked state from UI to local storage.
+        const writeChecks = () => {
+            var storage = {}
+            environments.forEach(environment => {
+                var birdChecks = {}
+                birds.forEach(bird => {
+                    birdChecks[bird] = document.getElementById(`${environment}_${bird}`).checked
+                })
+                storage[environment] = birdChecks
+            })
+            window.localStorage.setItem('boaf', JSON.stringify(storage))
+        }
+
         const load = () => {
+            // Prevent screen sleep.
             document.addEventListener('click', () => {
                 navigator.wakeLock.request('screen', () => {
                     document.removeEventListener('click');
                 });
             });
 
+            // Construct important table rows.
             let table = document.getElementById('boaf');
             environments.forEach((environment, index) => {
                 let row = table.insertRow(index + 1);
@@ -36,7 +61,8 @@
                 let scoreCell = row.insertCell();
                 scoreCell.innerHTML = '<span id="' + environment + '_score">'
             })
-            reset()
+            readChecks()
+            checkClick()
         }
 
         const reset = () => {
@@ -62,6 +88,7 @@
                 totalScore += environmentScore;
             });
             document.getElementById('total_score').innerHTML = totalScore ? totalScore : '';
+            writeChecks()
         }
 
         const checkAll = () => {
