@@ -9,8 +9,12 @@
         const birds = Object.keys(birdsAndScores);
 
         const load = () => {
-            navigator.wakeLock?.request('screen');
-            
+            document.addEventListener('click', () => {
+                navigator.wakeLock.request('screen', () => {
+                    document.removeEventListener('click');
+                });
+            });
+
             let table = document.getElementById('boaf');
             environments.forEach((environment, index) => {
                 let row = table.insertRow(index + 1);
@@ -117,6 +121,7 @@
         .description {
             font-size: small;
         }
+
         .environment {
             font-size: xx-large;
         }
