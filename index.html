@@ -25,7 +25,7 @@
                     columnCell.innerHTML = '<input type="checkbox" id="' + columnId + '" onclick="checkClick(this)"> <br />' + scoreString;
                 });
                 let allCell = row.insertCell();
-                allCell.innerHTML = '<input type="checkbox" id="' + environment + '_all" onclick="return false;"> <br />&#10047;&#10047;&#10047;';
+                allCell.innerHTML = '<input type="checkbox" id="' + environment + '_all" disabled="disabled";"> <br />&#10047;&#10047;&#10047;';
                 let scoreCell = row.insertCell();
                 scoreCell.innerHTML = '<span id="' + environment + '_score">'
             })
