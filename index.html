@@ -29,7 +29,8 @@
                         document.removeEventListener('click');
                     });
                 });
-
+                window.onresize = handleWarning;
+                handleWarning();
                 // Construct important table rows.
                 const table = document.getElementById('boaf');
                 environments.forEach((environment, index) => {
@@ -56,6 +57,11 @@
                 });
                 readStorageToChecks();
                 updateUI();
+            };
+
+            const handleWarning = () => {
+                const isTall = window.innerHeight > window.innerWidth;
+                document.getElementById('width_warning').style.display = isTall ? '' : 'none';
             };
 
             // Clear all checkboxes and update.
@@ -189,7 +195,9 @@
                 font-size: x-large;
                 font-weight: bold;
             }
-
+            #width_warning {
+                background-color: rosybrown;
+            }
             #total_score {
                 font-size: xx-large;
                 font-weight: bold;
@@ -221,6 +229,9 @@
                     <td colspan="7" class="description">2-4 players: 15 cards, 5 players: 12 cards<br />6 players: 10 cards, 7 players: 8 cards</td>
                     <td onclick="checkAll()">Score:</td>
                     <td id="total_score"></td>
+                </tr>
+                <tr id="width_warning">
+                    <td colspan="10">&#9888;Rotate your screen!&#9888;</td>
                 </tr>
             </tbody>
         </table>
